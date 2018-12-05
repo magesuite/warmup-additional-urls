@@ -26,8 +26,7 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
 
     public function getAdditionalUrls()
     {
-        $result = [];
-        return array_merge($result, $this->getProductListWarmupUrls());
+        return $this->getProductListWarmupUrls();
     }
 
     public function getProductListWarmupUrls()
