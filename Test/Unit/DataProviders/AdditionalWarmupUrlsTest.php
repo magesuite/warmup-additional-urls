@@ -9,10 +9,14 @@ class AdditionalWarmupUrlsTest extends \PHPUnit\Framework\TestCase
     protected $objectManager;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Collection|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productCollectionFactory;
+
+    /**
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productCollection;
-
     /**
      * @var \MageSuite\WarmupAdditionalUrls\DataProviders\AdditionalWarmupUrls
      */
@@ -21,8 +25,10 @@ class AdditionalWarmupUrlsTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
-        $this->productCollection = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)->disableOriginalConstructor()->getMock();
-        $this->dataProvider = $this->objectManager->create(\MageSuite\WarmupAdditionalUrls\DataProviders\AdditionalWarmupUrls::class, ['productCollection' => $this->productCollection]);
+        $this->productCollectionFactory = $this->getMockBuilder(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory::class)->disableOriginalConstructor()->getMock();
+        $this->productCollection = $this->getMockBuilder(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection::class)->disableOriginalConstructor()->getMock();
+
+        $this->dataProvider = $this->objectManager->create(\MageSuite\WarmupAdditionalUrls\DataProviders\AdditionalWarmupUrls::class, ['productCollectionFactory' => $this->productCollectionFactory]);
     }
 
     /**
@@ -32,6 +38,7 @@ class AdditionalWarmupUrlsTest extends \PHPUnit\Framework\TestCase
     public function testItReturnsCorrectProductListWarmupUrls()
     {
         $this->productCollection->method('getLastPageNumber')->willReturn(12);
+        $this->productCollectionFactory->method('create')->willReturn($this->productCollection);
         $urls = $this->dataProvider->getProductListWarmupUrls();
 
         $this->assertEquals(12, count($urls));

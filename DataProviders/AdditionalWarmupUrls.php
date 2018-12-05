@@ -1,14 +1,12 @@
 <?php
 namespace MageSuite\WarmupAdditionalUrls\DataProviders;
 
-
-
 class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\AdditionalWarmupUrlsInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory
      */
-    private $productCollection;
+    private $productCollectionFactory;
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
@@ -16,11 +14,11 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
 
 
     public function __construct(
-        \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $productCollection,
+        \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory $productCollectionFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
     )
     {
-        $this->productCollection = $productCollection;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->scopeInterface = $scopeInterface;
     }
 
@@ -31,7 +29,7 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
 
     public function getProductListWarmupUrls()
     {
-        $productCollection = $this->productCollection;
+        $productCollection = $this->productCollectionFactory->create();
 
         $productCollection->addAttributeToSelect('*');
         $productCollection->addAttributeToFilter('status',\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED);
