@@ -6,16 +6,22 @@ namespace MageSuite\WarmupAdditionalUrls\DataProviders;
 class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\AdditionalWarmupUrlsInterface
 {
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Collection
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     private $productCollection;
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    private $scopeInterface;
 
 
     public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection
+        \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $productCollection,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
     )
     {
         $this->productCollection = $productCollection;
+        $this->scopeInterface = $scopeInterface;
     }
 
     public function getAdditionalUrls()
@@ -30,6 +36,17 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
 
         $productCollection->addAttributeToSelect('*');
         $productCollection->addAttributeToFilter('status',\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED);
+
+        $showOutOfStock = $this->scopeInterface->getValue(
+            'cataloginventory/options/show_out_of_stock',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        if (!$showOutOfStock) {
+            $productCollection->addIsInStockFilter();
+        }
+
+        $productCollection->setPageSize(1000);
 
         $lastPage = $productCollection->getLastPageNumber();
         $urls = [];
