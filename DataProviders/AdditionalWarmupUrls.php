@@ -11,15 +11,20 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     private $scopeInterface;
-
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
 
     public function __construct(
         \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory $productCollectionFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeInterface,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     )
     {
         $this->productCollectionFactory = $productCollectionFactory;
         $this->scopeInterface = $scopeInterface;
+        $this->storeManager = $storeManager;
     }
 
     public function getAdditionalUrls()
@@ -29,6 +34,9 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
 
     public function getProductListWarmupUrls()
     {
+        $defaultStoreView = $this->storeManager->getDefaultStoreView();
+
+        $this->storeManager->setCurrentStore($defaultStoreView->getId());
         $productCollection = $this->productCollectionFactory->create();
 
         $productCollection->addAttributeToSelect('*');
