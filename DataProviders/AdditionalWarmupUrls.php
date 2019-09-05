@@ -51,7 +51,7 @@ class AdditionalWarmupUrls implements \MageSuite\PageCacheWarmer\DataProviders\A
             $productCollection->addIsInStockFilter();
         }
 
-        $productCollection->setPageSize(1000);
+        $productCollection->setPageSize(\MageSuite\Frontend\Block\Product\ProductList\Toolbar::LIMIT);
 
         $lastPage = $productCollection->getLastPageNumber();
         $urls = [];
