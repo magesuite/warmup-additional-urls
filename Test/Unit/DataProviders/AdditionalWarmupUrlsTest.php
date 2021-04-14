@@ -22,7 +22,7 @@ class AdditionalWarmupUrlsTest extends \PHPUnit\Framework\TestCase
      */
     protected $dataProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->productCollectionFactory = $this->getMockBuilder(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory::class)->disableOriginalConstructor()->getMock();
